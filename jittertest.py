@@ -1,10 +1,12 @@
 #jittertest.py
 import dsocomm as dd
 import dsofunctions as df
+import testfunctions as tf
 import baselinetest as bt
 import config as cf
 
 def jitter_test(chans) :
+    tf.report_write("\n****INTERCHANNEL JITTER TEST****\n")
 
     df.stop_acq()
 
@@ -48,7 +50,7 @@ def jitter_test(chans) :
     dd.vbs_cmd("Measure", "StatsOn", 1)
     b = dd.std_qry("*OPC?")
 
-    df.measure_and_test( "jitter", "skew jitter", "sdev", 200.0e-15, 450.0e-15, chans )
+    tf.measure_and_test( "jitter", "skew jitter", "sdev", 200.0e-15, 450.0e-15, chans )
 
     df.set_input_source_user(chans)
 

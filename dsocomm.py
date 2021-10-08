@@ -52,7 +52,7 @@ def vbs_qry(path , control):
     global _dso
     outstring = "VBS? " + "'Return = app."+path + "." + control + "'"
     _dso.WriteString(outstring , True)
-    r = _dso.ReadString(200)
+    r = _dso.ReadString(400)
     if r == 0 :
         print("Qry error, outstring = " + outstring + "r = ", r)
     return r

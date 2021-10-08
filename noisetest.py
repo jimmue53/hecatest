@@ -1,10 +1,13 @@
 #noisetest.py
 import dsocomm as dd
 import dsofunctions as df
+import testfunctions as tf
 import config as cf
 import numpy as np
 
 def noise_test(chans) :
+    tf.report_write("\n****NOISE SPECTRUM TEST****\n")
+    
     seg = range(8)
     segment = np.arange(8)
     lower = 1.25*segment
@@ -19,10 +22,7 @@ def noise_test(chans) :
     df.set_single_force_trig()
     df.view_channels(1, chans)  
     
-    dd.vbs_cmd("Math.F1","Source1", "C" + chans[0])
-    dd.vbs_cmd("Math.F1", "Operator1", "Zoom")
-    dd.vbs_cmd("Math.F1", "View", -1)
-
+    tf.setup_zoom_in_F1(chans[0])
        
     dd.vbs_cmd("Math.F2","Source1", "F1")
     dd.vbs_cmd("Math.F2", "Operator1", "FFT")
@@ -52,7 +52,7 @@ def noise_test(chans) :
         dd.vbs_cmd("Measure.P2", "GateStop", lower[s]+1.25)
         measurement_name = "segment {0} noise".format(s)
 
-        df.measure_and_test( "noisespectrum", measurement_name, "out", lower_limits[s], upper_limits[s], chans )
+        tf.measure_and_test( "noisespectrum", measurement_name, "out", lower_limits[s], upper_limits[s], chans )
     
 
 

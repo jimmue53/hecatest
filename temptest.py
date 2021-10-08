@@ -2,6 +2,7 @@
 
 import dsocomm as dd
 import dsofunctions as df
+import testfunctions as tf
 import time
 import config as cf
 import matplotlib.pyplot as plt

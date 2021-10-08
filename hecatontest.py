@@ -1,5 +1,6 @@
 import dsocomm as dd
 import dsofunctions as df
+import testfunctions as tf
 import baselinetest as bt
 import noisetest as nt
 import delaycaltests as dt
@@ -8,43 +9,50 @@ import jittertest as jt
 import pyodbc as db
 import config as cf
 import dbfunctions as dbf
-
-cf.run_num = 0
-
-num_acq_modules = 1
-acq_modules_to_test = [ 1 ]
-
-# Create list to test all non-dbi channels in 4 modules
-nondbi_chans = df.channels_to_test(acq_modules_to_test, [1, 2, 3, 4])
-
-# Create list to test all DBI channels (2 and 3 ) in 4 modules
-dbi_chans = df.channels_to_test(acq_modules_to_test, [2,3])
-
-# Create list to test 1st non-dbi channel in 4 modules
-first_chans = df.channels_to_test(acq_modules_to_test, [1])
-
-chans = nondbi_chans
-print("Channels to test: \n", chans)
+import time
 
 # general global enables
 cf.dbi_on = False
 cf.database_on = False
 cf.debug_on = True
 cf.sim_on = False
+cf.print_on = True
+cf.file_on = True
 
 # test enables
 baseline_tst_on = True
 noise_tst_on = False
 delaycal_tst_on = False
-temp_tst_on = False
-jitter_tst_on = True
+temp_tst_on = True
+jitter_tst_on = False
 
+# channels to test
+# nondbi_chans = ['1','2','3','4']
+nondbi_chans = ['1' , '2','3','4','5','6','7','8']
+dbi_chans = [ '2','3' ]
+
+chans = nondbi_chans
+
+cf.run_num = 0
+
+tf.report_init()
+
+num_acq_modules = 8
+
+
+if cf.dbi_on :
+    tf.report_write("\n**** DBI ON ****\n\n")
+else :
+    tf.report_write("\n**** DBI OFF ****\n\n")
+
+str_out = "Testing channels: {0} \n".format(chans)
+tf.report_write(str_out)
 
 # Initialize 
 if cf.sim_on :
     a = dd.start_dso("IP:127.0.0.1")
 else :
-    a = dd.start_dso("IP:10.7.10.36")
+    a = dd.start_dso("IP:10.7.10.16")
 
 if  not a  :
     print( "Can't connect to scope.")
@@ -56,17 +64,18 @@ if cf.debug_on :
 if not cf.sim_on :
     modstr = dd.std_qry("*idn?")
     mcm_sernum = df.extract_serial_nums(modstr,',')
-    print('MCM serial number = {0} \n'.format(mcm_sernum[0]))
+    tf.report_write('MCM serial number = {0} \n'.format(mcm_sernum[0]))
 
     modstr = dd.vbs_qry("Acquisition","AcquisitionModulesStatus")
     acq_sernums = df.extract_serial_nums(modstr,' ')
-    print('Acq module serial numbers = {0} \n'.format(acq_sernums))
+    tf.report_write('Acq module serial numbers = {0} \n'.format(acq_sernums))
 
 if cf.database_on :
     dbf.open_db("c:\Work\testdb2.mdb")
     dbf.write_runinfo_rec(num_acq_modules, mcm_sernum, acq_sernums)
 
 df.recall_default_setup()
+
 
 # Set up timebase if dbi on
 if cf.dbi_on :
@@ -91,6 +100,8 @@ if temp_tst_on :
 if cf.database_on :
     cf.conn.commit()
     cf.conn.close
+
+tf.report_finish()
 
 
 a = dd.end_dso()

@@ -7,3 +7,6 @@ global debug_on
 global run_num
 global conn
 global cursor
+global print_on
+global file_on
+global fh  #output file handle
