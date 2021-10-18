@@ -14,24 +14,26 @@ import time
 # general global enables
 cf.dbi_on = False
 cf.database_on = False
-cf.debug_on = True
+cf.debug_on = False
 cf.sim_on = False
 cf.print_on = True
 cf.file_on = True
 
-# test enables
-baseline_tst_on = True
+# standard test enables
+baseline_tst_on = False
 noise_tst_on = False
 delaycal_tst_on = False
-temp_tst_on = True
 jitter_tst_on = False
 
-# channels to test
-# nondbi_chans = ['1','2','3','4']
-nondbi_chans = ['1' , '2','3','4','5','6','7','8']
-dbi_chans = [ '2','3' ]
+# temperature test enable
+temp_tst_on = True
 
-chans = nondbi_chans
+# channels to test
+chans = ['1','2','3','4','5','6','7','8','9','10','11','12',
+'13','14','15','16','17','18','19','20','21','22','23','24',
+'25','26','27','28','29','30','31','32']
+#chans = [ '2','3' ]
+
 
 cf.run_num = 0
 
@@ -74,12 +76,6 @@ if cf.database_on :
     dbf.open_db("c:\Work\testdb2.mdb")
     dbf.write_runinfo_rec(num_acq_modules, mcm_sernum, acq_sernums)
 
-df.recall_default_setup()
-
-
-# Set up timebase if dbi on
-if cf.dbi_on :
-    df.set_dbimode(chans)
 
 # Tests
 

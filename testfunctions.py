@@ -22,9 +22,6 @@ def measure_and_test( testname, measurement_name, measure_type, lower_limit, upp
 
     for chan in chans_to_test :
         dd.vbs_cmd("Math.F1","Source1", "C" + chan)
-
-        df.set_single_force_trig()
-        dd.wait(10)
         b = dd.std_qry("*OPC?")
         
         # Get regular output or sdev depending on measurement type

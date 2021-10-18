@@ -76,7 +76,7 @@ def operation_complete():
 def std_qry(instring):
     global _dso
     _dso.WriteString(instring , True)
-    return _dso.ReadString(200)
+    return _dso.ReadString(400)
 
 def std_cmd(instring):
     global _dso

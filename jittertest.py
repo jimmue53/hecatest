@@ -8,6 +8,15 @@ import config as cf
 def jitter_test(chans) :
     tf.report_write("\n****INTERCHANNEL JITTER TEST****\n")
 
+    df.recall_default_setup()
+    # Set up timebase if dbi on
+    if cf.dbi_on :
+        df.set_dbimode(chans)
+    dd.vbs_cmd("Acquisition.C1", "View", 0)
+    dd.vbs_cmd("Acquisition.C2", "View", 0)
+    dd.vbs_cmd("Acquisition.F1", "View", 1)
+    dd.vbs_cmd("Measure.P2", "View", 0)
+
     df.stop_acq()
 
     df.set_service_access()
@@ -19,8 +28,6 @@ def jitter_test(chans) :
     b = dd.wait(60)
 
     df.set_input_source_calsquare(chans)
-
-    df.view_channels(1, chans)
 
     #dd.vbs_cmd("Acquisition.Trigger","C1Level","0.20")
     df.set_single_force_trig()
@@ -50,7 +57,7 @@ def jitter_test(chans) :
     dd.vbs_cmd("Measure", "StatsOn", 1)
     b = dd.std_qry("*OPC?")
 
-    tf.measure_and_test( "jitter", "skew jitter", "sdev", 200.0e-15, 450.0e-15, chans )
+    tf.measure_and_test( "jitter", "skew jitter", "sdev", 200.0e-15, 1500.0e-15, chans[1:] )
 
     df.set_input_source_user(chans)
 

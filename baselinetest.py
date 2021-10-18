@@ -9,12 +9,24 @@ def baseline_test( chans ) :
     # Baseline Test
     #
     tf.report_write("\n****BASELINE TEST****\n")
-    df.stop_acq()
 
-    df.view_channels(1, chans)  
-      
+    df.recall_default_setup()
+    # Set up timebase if dbi on
+    if cf.dbi_on :
+        df.set_dbimode(chans)
+    dd.vbs_cmd("Acquisition.C1", "View", 0)
+    dd.vbs_cmd("Acquisition.C2", "View", 0)
+    dd.vbs_cmd("Acquisition.F1", "View", 1)
+    dd.vbs_cmd("Measure.P2", "View", 0)
+
+    df.stop_acq()
+     
     tf.setup_zoom_in_F1(chans[0])
     
+    df.set_single_force_trig()
+    dd.wait(10)
+    b = dd.std_qry("*OPC?")
+
     # turn on P1 and set source to F1
     dd.vbs_cmd("Measure", "ShowMeasure", 1)
     dd.vbs_cmd("Measure.P1", "View", 1)

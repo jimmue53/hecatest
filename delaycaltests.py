@@ -7,6 +7,16 @@ import config as cf
 def delaycal_test(chans) :
     tf.report_write("\n****DELAYCAL SIGNAL TEST****\n")
     
+    df.recall_default_setup()
+    # Set up timebase if dbi on
+    if cf.dbi_on :
+        df.set_dbimode(chans)
+    dd.vbs_cmd("Acquisition.C1", "View", 0)
+    dd.vbs_cmd("Acquisition.C2", "View", 0)
+    dd.vbs_cmd("Acquisition.F1", "View", 1)
+    dd.vbs_cmd("Measure.P2", "View", 0)
+
+
     df.stop_acq()
 
     df.set_service_access()
@@ -15,8 +25,6 @@ def delaycal_test(chans) :
     b = dd.wait(60)
 
     df.set_input_source_calsquare(chans)
-
-    df.view_channels(1, chans)
 
     #dd.vbs_cmd("Acquisition.Trigger","C1Level","0.20")
     df.set_single_force_trig()
