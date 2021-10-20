@@ -4,63 +4,67 @@ import testfunctions as tf
 import baselinetest as bt
 import noisetest as nt
 import delaycaltests as dt
-import temptest as tt
 import jittertest as jt
 import pyodbc as db
 import config as cf
 import dbfunctions as dbf
 import time
 
-# general global enables
+#***************** BEGIN TEST CONFIGURATION *******************
+
+# DBI STATE FOR ALL CHANNELS UNDER TEST IS THE SAME. SET HERE:
 cf.dbi_on = False
-cf.database_on = False
-cf.debug_on = False
-cf.sim_on = False
+
+# SPECIFY CHANNELS TO TEST.  MUST BE CONSISTENT WITH dbi STATE SET ABOVE
+chans = ['1','2','3','4','5','6','7','8','9','10','11','12',
+'13','14','15','16','17','18','19','20']
+
+
+#chans = ['1','2','3','4','5','6','7','8','9','10','11','12',
+#'13','14','15','16','17','18','19','20','21','22','23','24',
+#'25','26','27','28','29','30','31','32']
+#chans = [ '2','3','6','7','10','11','14','15','18','19','22','23','26','27','30','31']
+
+# SELECT TESTS TO RUN
+baseline_tst_on  =  True
+noise_tst_on     =  True
+delaycal_tst_on  =  True
+jitter_tst_on    =  True
+
+# SPECIFY REPORTING OPTIONS
 cf.print_on = True
 cf.file_on = True
+cf.database_on = False
 
-# standard test enables
-baseline_tst_on = False
-noise_tst_on = False
-delaycal_tst_on = False
-jitter_tst_on = False
+# SPECIFY SCOPE ADDRESS
+scope_address = "IP:10.7.10.16"
 
-# temperature test enable
-temp_tst_on = True
+#******************** END TEST CONFIGURATION *******************
 
-# channels to test
-chans = ['1','2','3','4','5','6','7','8','9','10','11','12',
-'13','14','15','16','17','18','19','20','21','22','23','24',
-'25','26','27','28','29','30','31','32']
-#chans = [ '2','3' ]
+#******************* SPECIAL TEST CONFIGURATION ******************
+# FOR USING SCOPE SIMULATOR TO WORK ON CODE
+cf.sim_on = False
 
+# USE FOR DEBUG PRINTOUTS TO WORK ON CODE
+cf.debug_on = False
+#******************* END OF SPECIAL TEST CONFIGURATION ************
 
-cf.run_num = 0
+if cf.sim_on :
+    scope_address = "IP:127.0.0.1"
+a = dd.start_dso(scope_address)
+if  not a  :
+    print( "Can't connect to scope.")
+    quit()
 
 tf.report_init()
-
-num_acq_modules = 8
-
 
 if cf.dbi_on :
     tf.report_write("\n**** DBI ON ****\n\n")
 else :
     tf.report_write("\n**** DBI OFF ****\n\n")
 
-str_out = "Testing channels: {0} \n".format(chans)
-tf.report_write(str_out)
+tf.report_write("Testing channels: {0} \n".format(chans))
 
-# Initialize 
-if cf.sim_on :
-    a = dd.start_dso("IP:127.0.0.1")
-else :
-    a = dd.start_dso("IP:10.7.10.16")
-
-if  not a  :
-    print( "Can't connect to scope.")
-    quit()
-if cf.debug_on :
-    print(dd.std_qry("*idn?"),"\n")
 
 # Get MCM and Acq module serial numbers
 if not cf.sim_on :
@@ -69,16 +73,15 @@ if not cf.sim_on :
     tf.report_write('MCM serial number = {0} \n'.format(mcm_sernum[0]))
 
     modstr = dd.vbs_qry("Acquisition","AcquisitionModulesStatus")
-    acq_sernums = df.extract_serial_nums(modstr,' ')
+    num_acq_modules, acq_sernums = df.extract_serial_nums(modstr,' ')
     tf.report_write('Acq module serial numbers = {0} \n'.format(acq_sernums))
 
+# Write new run record
 if cf.database_on :
-    dbf.open_db("c:\Work\testdb2.mdb")
+    dbf.open_db("c:\Work\testdb3.mdb")
     dbf.write_runinfo_rec(num_acq_modules, mcm_sernum, acq_sernums)
 
-
-# Tests
-
+# Run Enabled Tests
 if baseline_tst_on :
     bt.baseline_test(chans)
 if noise_tst_on :
@@ -89,15 +92,13 @@ if delaycal_tst_on :
 if jitter_tst_on :
     jt.jitter_test(chans)
 
-if temp_tst_on :
-    tt.temp_test()
-
-
+# Close database
 if cf.database_on :
     cf.conn.commit()
     cf.conn.close
 
+# Close report file
 tf.report_finish()
 
-
+# Close scope connection
 a = dd.end_dso()
