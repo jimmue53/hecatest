@@ -16,12 +16,13 @@ def baseline_test( chans ) :
         df.set_dbimode(chans)
     dd.vbs_cmd("Acquisition.C1", "View", 0)
     dd.vbs_cmd("Acquisition.C2", "View", 0)
-    dd.vbs_cmd("Acquisition.F1", "View", 1)
+    
+    tf.setup_zoom_in_F1(chans[0])
+    dd.vbs_cmd("Math.F1", "View", 1)
     dd.vbs_cmd("Measure.P2", "View", 0)
 
     df.stop_acq()
      
-    tf.setup_zoom_in_F1(chans[0])
     
     df.set_single_force_trig()
     dd.wait(10)

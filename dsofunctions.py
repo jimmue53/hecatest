@@ -65,13 +65,11 @@ def view_channels(on , chans) :
 def extract_serial_nums(instr,splitchar) :
     instrsplt=instr.split(splitchar)
     splto = []
-    num = 0
     for s in instrsplt :
         if "LCRY" in s :
             s = s.strip('"')
             splto.append(s)
-            num = num + 1
-    return num, splto
+    return splto
 
 
 

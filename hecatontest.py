@@ -16,14 +16,15 @@ import time
 cf.dbi_on = False
 
 # SPECIFY CHANNELS TO TEST.  MUST BE CONSISTENT WITH dbi STATE SET ABOVE
-chans = ['1','2','3','4','5','6','7','8','9','10','11','12',
-'13','14','15','16','17','18','19','20']
 
 
+#chans = ['1','2','3','4']
 #chans = ['1','2','3','4','5','6','7','8','9','10','11','12',
-#'13','14','15','16','17','18','19','20','21','22','23','24',
-#'25','26','27','28','29','30','31','32']
-#chans = [ '2','3','6','7','10','11','14','15','18','19','22','23','26','27','30','31']
+#'13','14','15','16','17','18','19','20']
+chans = ['1','2','3','4','5','6','7','8','9','10','11','12',
+'13','14','15','16','17','18','19','20','21','22','23','24',
+'25','26','27','28']
+#chans = [ '2','3','6','7','10','11','14','15','18','19','22','23','26','27']
 
 # SELECT TESTS TO RUN
 baseline_tst_on  =  True
@@ -70,15 +71,24 @@ tf.report_write("Testing channels: {0} \n".format(chans))
 if not cf.sim_on :
     modstr = dd.std_qry("*idn?")
     mcm_sernum = df.extract_serial_nums(modstr,',')
-    tf.report_write('MCM serial number = {0} \n'.format(mcm_sernum[0]))
+else:
+    mcm_sernum = ["sim"]
 
+tf.report_write('MCM serial number = {0} \n'.format(mcm_sernum[0]))
+
+
+if not cf.sim_on :
     modstr = dd.vbs_qry("Acquisition","AcquisitionModulesStatus")
-    num_acq_modules, acq_sernums = df.extract_serial_nums(modstr,' ')
+    acq_sernums = df.extract_serial_nums(modstr,' ')
     tf.report_write('Acq module serial numbers = {0} \n'.format(acq_sernums))
+else :
+    acq_sernums = mcm_sernum
+
+num_acq_modules = len(acq_sernums)
 
 # Write new run record
 if cf.database_on :
-    dbf.open_db("c:\Work\testdb3.mdb")
+    dbf.open_db(r'c:\Work\testdb23.mdb')
     dbf.write_runinfo_rec(num_acq_modules, mcm_sernum, acq_sernums)
 
 # Run Enabled Tests
@@ -90,7 +100,8 @@ if delaycal_tst_on :
     if not cf.dbi_on :
         dt.delaycal_test(chans)
 if jitter_tst_on :
-    jt.jitter_test(chans)
+    if not cf.dbi_on :
+        jt.jitter_test(chans)
 
 # Close database
 if cf.database_on :

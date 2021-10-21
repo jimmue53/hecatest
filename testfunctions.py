@@ -8,7 +8,7 @@ import time
 
 def setup_zoom_in_F1(source) :
     # source is the ascii channel identifier of the source waveform, e.g., "C1"
-    dd.vbs_cmd("Math.F1","Source1", source)
+    dd.vbs_cmd("Math.F1","Source1", "C" + source)
     dd.vbs_cmd("Math.F1", "Operator1", "Zoom")
     dd.vbs_cmd("Math.F1", "View", -1)
 

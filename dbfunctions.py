@@ -3,7 +3,8 @@ import config as cf
 
 def open_db(filepath):
     if cf.database_on :
-        cf.conn = db.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + filepath + ';')
+        connectstr = r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + filepath + ';'
+        cf.conn = db.connect(connectstr)
         cf.cursor = cf.conn.cursor()
 
 def write_runinfo_rec(num_acq_modules, mcm_sernum, acq_sernums):

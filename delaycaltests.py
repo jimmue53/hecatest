@@ -13,7 +13,7 @@ def delaycal_test(chans) :
         df.set_dbimode(chans)
     dd.vbs_cmd("Acquisition.C1", "View", 0)
     dd.vbs_cmd("Acquisition.C2", "View", 0)
-    dd.vbs_cmd("Acquisition.F1", "View", 1)
+    dd.vbs_cmd("Math.F1", "View", 1)
     dd.vbs_cmd("Measure.P2", "View", 0)
 
 

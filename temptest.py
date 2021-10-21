@@ -10,7 +10,7 @@ import numpy as np
 
 
 count = range(3600)
-board = "Board0"
+board = "Board6"
 monitors = ["HSHCH1", "HSHCH2", "HSHCH3", "HSHCH4"]
 tgraph = [[],[],[],[]]
 
